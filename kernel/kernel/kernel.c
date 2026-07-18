@@ -8,6 +8,7 @@
 #include <kernel/kernel.h>
 #include <kstdio.h>
 #include <arch/x86/cpu/gdt.h>
+#include <arch/x86/cpu/idt.h>
 struct console *kcon;
 
 static inline void hcf(void)
@@ -48,6 +49,8 @@ void kernel_main(uint32_t magic, uint32_t boot_info)
 	gdt_init();
 	kprintf("[BOOT] GDT Initialized!\n");
 
+	idt_init();
+	kprintf("[BOOT] IDT Initialized\n");
 
 	/* halt for now */
 	serial_write("Halting System\n");

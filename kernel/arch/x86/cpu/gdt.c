@@ -20,9 +20,9 @@ void gdt_set_desc(int desc,
 /* loads the kernel entries, null entries and other stuff */
 void gdt_init(void)
 {
-	static struct gdt_desc _gdt_desc;
-	_gdt_desc.size = sizeof(gdt_entries) - 1;
-	_gdt_desc.offset = (uint32_t)&gdt_entries;
+	static struct gdt_desc desc;
+	desc.size = sizeof(gdt_entries) - 1;
+	desc.offset = (uint32_t)&gdt_entries;
 	/* null */
 	gdt_set_desc(0, 0, 0, 0, 0);
 	/* kernel code */
@@ -31,5 +31,5 @@ void gdt_init(void)
 	gdt_set_desc(2, 0xFFFFF, 0, 0x92, 0xCF);
 
 	/* load */
-	gdt_load(_gdt_desc.size, _gdt_desc.offset);
+	gdt_load(desc.size, desc.offset);
 }
