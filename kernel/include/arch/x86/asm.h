@@ -14,4 +14,8 @@ static inline uint8_t port_inb(uint16_t port)
 	return val;
 }
 
+static inline void port_wait(void)
+{
+	port_outb(0x80, 0);
+}
 #endif /* ARCH_X86_ASM_H */

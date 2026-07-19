@@ -45,13 +45,14 @@ ISR_NO_ERROR 28
 ISR_NO_ERROR 29
 ISR_NO_ERROR 30
 ISR_ERROR 31
-ISR_NO_ERROR 32
 
 /* make a table so idt.c can access it and load it */
 .globl isr_table
 isr_table:
-.irp i, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
-	.long isr_stub_\i
+.set i, 0
+.rept 32
+	.long isr_stub_0 + (i)
+	.set i, i + 1
 .endr
 
 /* we make the cpu know whats going on, push registers and call the C Handler */
