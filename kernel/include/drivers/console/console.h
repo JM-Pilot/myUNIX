@@ -1,9 +1,10 @@
+#ifndef DRIVERS_CONSOLE_H
+#define DRIVERS_CONSOLE_H
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <drivers/video/psf.h>
 #include <kfonts.h>
-#ifndef DRIVERS_CONSOLE_H
-#define DRIVERS_CONSOLE_H
 
 struct console {
 	int cx, cy;

@@ -1,9 +1,10 @@
-#include <stdint.h>
 #ifndef KFONTS_H
 #define KFONTS_H
 
+#include <stdint.h>
 
-/* these files are not to be changed, they are located at misc/ (kernel/misc/)*/
+
+/* these files they are built in and not to be changed, they are located at misc/ (kernel/misc/)*/
 extern uint8_t _binary_misc_Lat2_Terminus16_psfu_start[];
 extern uint8_t _binary_misc_ter_u16n_psfu_start[];
 extern uint8_t _binary_misc_ter_v16n_psfu_start[];

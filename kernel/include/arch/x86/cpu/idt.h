@@ -1,6 +1,7 @@
-#include <stdint.h>
 #ifndef ARCH_X86_CPU_IDT_H
 #define ARCH_X86_CPU_IDT_H
+
+#include <stdint.h>
 
 struct idt_desc {
 	uint16_t size;

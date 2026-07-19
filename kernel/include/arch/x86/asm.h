@@ -1,6 +1,6 @@
-#include <stdint.h>
 #ifndef ARCH_X86_ASM_H
 #define ARCH_X86_ASM_H
+#include <stdint.h>
 
 static inline void port_outb(uint16_t port, uint8_t val)
 {

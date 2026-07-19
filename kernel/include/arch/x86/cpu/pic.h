@@ -1,6 +1,6 @@
-#include <stdint.h>
 #ifndef ARCH_X86_CPU_PIC_H
 #define ARCH_X86_CPU_PIC_H
+#include <stdint.h>
 
 #define PIC1_COM 0x20
 #define PIC1_DATA 0x21

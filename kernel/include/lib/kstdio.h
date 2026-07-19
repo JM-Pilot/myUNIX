@@ -1,6 +1,7 @@
-#include <stdarg.h>
 #ifndef KSTDIO_H
 #define KSTDIO_H
+
+#include <stdarg.h>
 
 void kputc(char c);
 void kputs(const char *str);
