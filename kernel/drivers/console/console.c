@@ -2,7 +2,7 @@
 #include <drivers/video/framebuffer.h>
 #include <drivers/video/psf.h>
 #include <drivers/console/console.h>
-
+#include <string.h>
 /* initialize a console */
 void console_init(struct console **con, uint8_t *font, int tabwidth, 
 	uint32_t fg, uint32_t bg, bool cursor_on)
@@ -30,6 +30,19 @@ void console_init(struct console **con, uint8_t *font, int tabwidth,
 	(*con)->cy = 0;
 	(*con)->cursor_on = cursor_on;
 	(*con)->font = font;
+}
+
+/* scrolls up the framebuffer using the font height */
+static void scroll_up(struct console *con)
+{
+	int font_height = (con->psf_file_type == IS_PSF2 ? con->fontv2->height : con->fontv1->glyph_size);
+	uint8_t *addr = (uint8_t*)(uintptr_t)framebuffer_main.framebuffer_addr;
+	uint32_t pitch = framebuffer_main.framebuffer_pitch;
+	uint32_t height = framebuffer_main.framebuffer_height;
+	/* move up */
+	memmove(addr, addr + pitch * font_height, pitch * (height - font_height));
+	/* clear last row */
+	memset(addr + pitch * (height - font_height), 0, pitch * font_height);
 }
 
 static void draw_cursor(struct console *con)
@@ -62,8 +75,10 @@ static void draw_cursor(struct console *con)
 static void insert_newline(struct console *con)
 {
 	con->cx = 0;
-	if ((uint32_t)++con->cy >= con->cellsy)
+	if ((uint32_t)++con->cy >= con->cellsy) {
+		scroll_up(con);
 		con->cy--;
+	}
 	draw_cursor(con);
 }
 

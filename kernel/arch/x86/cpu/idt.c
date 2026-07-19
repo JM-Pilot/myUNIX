@@ -5,7 +5,8 @@
 #include <arch/x86/cpu/irq.h>
 extern uint32_t isr_table[32];
 
-struct idt_entry idt_entries[256];
+__attribute__((aligned(0x10)))
+static struct idt_entry idt_entries[256];
 /* sets the entry with the filled out arguments */
 void idt_set_entry(int desc, uint32_t offset, 
 		   uint16_t segment, uint8_t flags)

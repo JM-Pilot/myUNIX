@@ -18,11 +18,6 @@ static inline void hcf(void)
 {
 	for (;;) __asm__ volatile ("hlt");
 }
-void timer_handler(struct interrupt_frame *iframe)
-{
-	(void)iframe;
-	kputs("tick ");
-}
 void kernel_main(uint32_t magic, uint32_t boot_info)
 {
 	if (magic != MULTIBOOT2_BOOTLOADER_MAGIC)
@@ -66,10 +61,6 @@ void kernel_main(uint32_t magic, uint32_t boot_info)
 	irq_init();
 	kprintf("[BOOT] IRQ Initialized\n");
 
-	irq_install_handler(0, timer_handler);
-	kprintf("timer_handler = %#x\n", (uint32_t)timer_handler);
-	kprintf("Master mask = %#x\n", port_inb(PIC1_DATA));
-	kprintf("Slave  mask = %#x\n", port_inb(PIC2_DATA));
 	__asm__ volatile ("sti");
 
 	while (1) {};
