@@ -2,9 +2,10 @@
 #include <kstdio.h>
 #include <arch/x86/cpu/idt.h>
 #include <arch/x86/cpu/gdt.h>
+#include <arch/x86/cpu/irq.h>
 extern uint32_t isr_table[32];
 
-static struct idt_entry idt_entries[256];
+struct idt_entry idt_entries[256];
 /* sets the entry with the filled out arguments */
 void idt_set_entry(int desc, uint32_t offset, 
 		   uint16_t segment, uint8_t flags)
@@ -69,6 +70,9 @@ static const char *exceptions[] = {
 /* handles cpu interrupts */
 void interrupt_handler(struct interrupt_frame *iframe)
 {
+	if (iframe->int_num >= 32 && iframe->int_num <= 47)
+		irq_handle(iframe);
+
 	if (iframe->int_num < 32) {
 		kprintf("Interrupt!\n");
 		kprintf("Interrupt Number: %d (%s), Error Code %#.2X\n", 
@@ -82,7 +86,8 @@ void interrupt_handler(struct interrupt_frame *iframe)
 		
 		kprintf(" GS: %#x, FS: %#x, ES: %#x, DS: %#x\n",
 			iframe->gs, iframe->fs, iframe->es, iframe->ds);
-		kprintf(" EFLAGS: %#x, CS: %#x, EIP: %#x\n");
+		kprintf(" EFLAGS: %#x, CS: %#x, EIP: %#x\n",
+			iframe->eflags, iframe->cs, iframe->eip);
 		kprintf("Halting!\nreboot now\n");
 		__asm__ volatile ("cli");
 		for (;;) __asm__ volatile ("hlt");

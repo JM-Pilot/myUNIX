@@ -11,8 +11,8 @@ void gdt_set_desc(int desc,
 {
 	gdt_entries[desc].limit_low = limit & 0xFFFF;
 	gdt_entries[desc].base_low = base & 0xFFFF;
-	gdt_entries[desc].base_mid = (base >> 16) & 0xFFFF;
-	gdt_entries[desc].base_high = (base >> 24) & 0xFFFF;
+	gdt_entries[desc].base_mid = (base >> 16) & 0xFF;
+	gdt_entries[desc].base_high = (base >> 24) & 0xFF;
 	gdt_entries[desc].flags = (flags & 0xF) << 4 | (limit & 0xF );
 	gdt_entries[desc].access = access;
 }
@@ -28,7 +28,7 @@ void gdt_init(void)
 	/* kernel code */
 	gdt_set_desc(1, 0xFFFFF, 0, 0x9A, 0xC);
 	/* kernel data  */
-	gdt_set_desc(2, 0xFFFFF, 0, 0x92, 0xCF);
+	gdt_set_desc(2, 0xFFFFF, 0, 0x92, 0xC);
 
 	/* load */
 	gdt_load(desc.size, desc.offset);

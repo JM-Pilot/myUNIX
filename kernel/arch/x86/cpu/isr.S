@@ -1,14 +1,14 @@
 .macro ISR_NO_ERROR num
 isr_stub_\num:
 	push $0		/* we must push a dummy error code */
-	push \num
+	push $\num
 	jmp _isr_handler
 .endm
 
 .macro ISR_ERROR num
 isr_stub_\num:
 	/* do not push a dummy error code because the cpu will do it */
-	push \num
+	push $\num
 	jmp _isr_handler
 .endm
 
@@ -53,6 +53,29 @@ isr_table:
 	.long isr_stub_\i
 .endr
 
+/* irqs */
+ISR_NO_ERROR 32
+ISR_NO_ERROR 33
+ISR_NO_ERROR 34
+ISR_NO_ERROR 35
+ISR_NO_ERROR 36
+ISR_NO_ERROR 37
+ISR_NO_ERROR 38
+ISR_NO_ERROR 39
+ISR_NO_ERROR 40
+ISR_NO_ERROR 41
+ISR_NO_ERROR 42
+ISR_NO_ERROR 43
+ISR_NO_ERROR 44
+ISR_NO_ERROR 45
+ISR_NO_ERROR 46
+ISR_NO_ERROR 47
+
+.globl irq_table
+irq_table:
+.irp i, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47
+	.long isr_stub_\i
+.endr
 /* we make the cpu know whats going on, push registers and call the C Handler */
 .extern interrupt_handler
 _isr_handler:
@@ -68,23 +91,17 @@ _isr_handler:
 	mov %ax, %fs
 	mov %ax, %gs
 
-/* this does not work at all
 	mov %esp, %eax
 	push %eax
-	mov interrupt_handler, %eax 
+	mov $interrupt_handler, %eax 
 	call *%eax
 	pop %eax
-*/
-
-	push %esp
-	call interrupt_handler
-	add $4, %esp
 
 	pop %gs
 	pop %fs
 	pop %es
 	pop %ds
 
-	add $8, %esp
 	popa
+	add $8, %esp
 	iret

@@ -38,8 +38,8 @@ void pic_remap(int offset1, int offset2,
 	port_outb(PIC2_DATA, ICW4_8086);
 	port_wait();
 
-	port_outb(PIC1_COM, mask1);
-	port_outb(PIC2_COM, mask2);
+	port_outb(PIC1_DATA, mask1);
+	port_outb(PIC2_DATA, mask2);
 }
 
 /* disable the pic if you want to use APIC */
