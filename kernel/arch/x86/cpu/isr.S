@@ -49,10 +49,8 @@ ISR_ERROR 31
 /* make a table so idt.c can access it and load it */
 .globl isr_table
 isr_table:
-.set i, 0
-.rept 32
-	.long isr_stub_0 + (i)
-	.set i, i + 1
+.irp i, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
+	.long isr_stub_\i
 .endr
 
 /* we make the cpu know whats going on, push registers and call the C Handler */

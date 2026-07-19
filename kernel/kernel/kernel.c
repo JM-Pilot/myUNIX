@@ -52,6 +52,8 @@ void kernel_main(uint32_t magic, uint32_t boot_info)
 	idt_init();
 	kprintf("[BOOT] IDT Initialized\n");
 
+	__asm__ volatile ("sti");
+	__asm__ volatile ("int $8");
 	/* halt for now */
 	serial_write("Halting System\n");
 	hcf();
