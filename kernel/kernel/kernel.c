@@ -30,6 +30,9 @@ void kernel_main(uint32_t magic, uint32_t boot_info)
 	if (serial_init() == false)
 		hcf();
 
+	/* clear screen */
+	serial_write("\033[2J\033[H");
+
 	/* check requests */
 	for (tag = (struct multiboot_tag*)(boot_info + 8);
 		tag->type != MULTIBOOT_TAG_TYPE_END;
