@@ -147,4 +147,5 @@ void console_disable_cursor(struct console *con)
 void console_enable_cursor(struct console *con)
 {
 	con->cursor_on = true;
+	draw_cursor(con);
 }

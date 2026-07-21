@@ -13,6 +13,7 @@
 #include <arch/x86/cpu/irq.h>
 #include <arch/x86/asm.h>
 #include <drivers/timers/pit.h>
+#include <drivers/input/ps2.h>
 
 struct console *kcon;
 
@@ -49,7 +50,7 @@ void kernel_main(uint32_t magic, uint32_t boot_info)
 	}
 
 	/* initialize the console */
-	console_init(&kcon, FONT_TER_V16B, 8, 0xFFFFFF, 0, false);
+	console_init(&kcon, FONT_TER_U18N, 8, 0xFFFFFF, 0, false);
 	kputs("Hello From Kernel STDIO (kstdio)\n");
 	
 	/* initialize the Global Descriptor Table */
@@ -60,17 +61,27 @@ void kernel_main(uint32_t magic, uint32_t boot_info)
 	idt_init();
 	kprintf("[BOOT] IDT Initialized\n");
 	
-	pic_remap(0x20, 0x28, 0xFE, 0xFF);
+	pic_remap(0x20, 0x28, 0xFC, 0xFF);
 	kprintf("[BOOT] PIC Remaped\n");
 
 	irq_init();
 	kprintf("[BOOT] IRQ Initialized\n");
 
 	pit_init();
-	kprintf("[SYS] PIT Initialized (250hz)\n");
+	kprintf("[SYS] PIT Initialized (%dhz)\n", PIT_HZ);
+
+	ps2_init();
+	kprintf("[I/O] PS2 Initialized\n");
+	kprintf("Welcome to myUNIX or whatever this OS is called\nHave Fun!\n");
+
+	serial_write("Interrupts Enabled\n");
 	__asm__ volatile ("sti");
 
+	/* write something */
+	console_enable_cursor(kcon);
+
 	while (1) {
+		kputc(ps2_getc());
 	};
 
 	/* halt for now */
