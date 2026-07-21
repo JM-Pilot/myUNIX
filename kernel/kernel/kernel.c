@@ -14,6 +14,7 @@
 #include <arch/x86/asm.h>
 #include <drivers/timers/pit.h>
 #include <drivers/input/ps2.h>
+#include <kernel/shell/shell.h>
 
 struct console *kcon;
 
@@ -77,11 +78,11 @@ void kernel_main(uint32_t magic, uint32_t boot_info)
 	serial_write("Interrupts Enabled\n");
 	__asm__ volatile ("sti");
 
-	/* write something */
-	console_enable_cursor(kcon);
 
+	/* start shell */
+	kshell_init();
 	while (1) {
-		kputc(ps2_getc());
+		kshell_interpret();
 	};
 
 	/* halt for now */
