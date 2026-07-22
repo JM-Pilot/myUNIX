@@ -15,7 +15,7 @@
 #include <drivers/timers/pit.h>
 #include <drivers/input/ps2.h>
 #include <kernel/shell/shell.h>
-
+#include <acpi/acpi.h>
 struct console *kcon;
 
 static inline void hcf(void)
@@ -37,6 +37,7 @@ void kernel_main(uint32_t magic, uint32_t boot_info)
 	/* clear screen */
 	serial_write("\033[2J\033[H");
 
+	serial_write("CHECKING GRUB FIELDS\n");
 	/* check requests */
 	for (tag = (struct multiboot_tag*)(boot_info + 8);
 		tag->type != MULTIBOOT_TAG_TYPE_END;
@@ -46,9 +47,15 @@ void kernel_main(uint32_t magic, uint32_t boot_info)
 		{
 			case MULTIBOOT_TAG_TYPE_FRAMEBUFFER:
 				framebuffer_init((struct multiboot_tag_framebuffer*)tag);
+				serial_write("fb init..\n");
+				break;
+			case MULTIBOOT_TAG_TYPE_ACPI_OLD:
+				acpi_init((struct multiboot_tag_old_acpi*)tag);
+				serial_write("acpi old init..\n");
 				break;
 		}
 	}
+	serial_write("====================\n");
 
 	/* initialize the console */
 	console_init(&kcon, FONT_TER_U18N, 8, 0xFFFFFF, 0, false);

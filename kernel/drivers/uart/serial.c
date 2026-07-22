@@ -1,8 +1,9 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #include <drivers/uart/serial.h>
 #include <arch/x86/asm.h>
-
+#include <kstdio.h> /* kvsprintf */
 static uint16_t current_serial = SERIAL_COM1;
 
 /* returns false if serial is faulty 
@@ -103,3 +104,18 @@ void serial_switch(uint32_t port)
 	if (!check_if_correct_serial()) invalid_serial();
 }
 
+/* write a formatted string into serial */
+int serial_printf(const char *fmt, ...)
+{
+	char buf[2048]; /* same as kprintf */
+	va_list args;
+	va_start(args, fmt);
+
+	int count = kvsprintf(buf, fmt, args);
+
+	va_end(args);
+	/* instead of outputting to console we output to serial */
+	serial_write(buf);
+
+	return count;
+}

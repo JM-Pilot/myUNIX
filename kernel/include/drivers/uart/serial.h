@@ -18,5 +18,6 @@ bool serial_transmit_empty(void);
 void serial_putc(char c);
 void serial_write(const char *str);
 void serial_switch(uint32_t port);
+int serial_printf(const char *fmt, ...);
 
 #endif /* DRIVERS_UART_SERIAL_H */

@@ -18,4 +18,11 @@ static inline void port_wait(void)
 {
 	port_outb(0x80, 0);
 }
+
+
+/* either use this or gcc <cpuid.h> */
+static inline void cpuid(int code, uint32_t *a, uint32_t *d)
+{
+	__asm__ volatile ("cpuid" : "=a"(*a), "=d"(*d) : "0"(code) : "ebx", "ecx");
+}
 #endif /* ARCH_X86_ASM_H */

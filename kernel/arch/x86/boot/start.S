@@ -18,7 +18,7 @@ multiboot_header_start:
 	.long 32
 .framebuffer_req_end:
 
-/* align the end */
+/* align the end too, so grub will see it*/
 .align 8
 	.short MULTIBOOT_HEADER_TAG_END
 	.short 0
