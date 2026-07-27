@@ -48,6 +48,13 @@ $(BUILD)/$(OUTPUT).iso: tools-limine kernel
         	$(BUILD)/iso -o $@ >/dev/null 2>&1
 	$(TOOLS_DIR)/limine-binary/limine bios-install $@ > /dev/null 2>&1
 	
+run: iso
+
+	qemu-system-x86_64 \
+	    	-cdrom $(BUILD)/$(OUTPUT).iso \
+	    	-M q35 \
+		$(QEMU_FLAGS) \
+		-serial stdio
 run-efi: tools-edk2 iso
 	qemu-system-x86_64 \
 	    	-cdrom $(BUILD)/$(OUTPUT).iso \
@@ -69,3 +76,5 @@ clean:
 
 clean-tools:
 	rm -rf $(TOOLS_DIR)
+
+clean-all: clean clean-tools
