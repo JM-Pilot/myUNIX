@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <utils/kprint.h>
 #include <kernel/kernel.h>
+#include <drivers/uart/serial.h>
 
 /* helper function to turn integers to string 
  * @param buf -- output
@@ -62,7 +63,7 @@ static void intostr(char *buf, int precision,
 			tmp[i++] = hex[uint_value & 0xF];
 		} while (uint_value >>= 4);
 
-		while (i < precision && i + precision < 16)
+		while (i < precision)
 			tmp[i++] = '0';
 
 		if (add_prefix) {
@@ -81,7 +82,7 @@ static void intostr(char *buf, int precision,
 			tmp[i++] = '0' + (uint_value & 1);
 		} while (uint_value >>= 1);
 
-		while (i < precision && i + precision < 64)
+		while (i < precision)
 			tmp[i++] = '0';
 
 		if (add_prefix) {
@@ -137,7 +138,7 @@ int kvsprintf(char *buf, const char *fmt, va_list args)
 				/* this will be added to fmt to skip the int */
 				int tmp = 0;
 				/* do the precision */
-				tmp = strtoint(precision, (char*)fmt, &tmp);
+				precision = strtoint(precision, (char*)fmt, &tmp);
 				fmt += tmp;
 			}
 
@@ -278,6 +279,6 @@ int kprintf(const char *fmt, ...)
 	va_end(args);
 
 	console_write(&kcon, buf);
-	
+	serial_puts(buf);
 	return ret;
 }

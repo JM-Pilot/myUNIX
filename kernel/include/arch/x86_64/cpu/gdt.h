@@ -1,5 +1,9 @@
 #ifndef ARCH_X86_64_CPU_GDT_H
 #define ARCH_X86_64_CPU_GDT_H
+
+#define KERNEL_CODE 0x8
+#define KERNEL_DATA 0x10
+
 #include <stdint.h>
 
 struct gdt_desc {

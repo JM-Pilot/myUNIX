@@ -57,7 +57,7 @@ static void _putc(struct console *con, char c)
 			con->cursx = 0;
 			return;
 		case '\t':
-			con->cursx = con->tab_width + (con->cursx % con->tab_width);
+			con->cursx += con->tab_width - (con->cursx % con->tab_width);
 			return;
 		case '\b':
 			if (con->cursx == 0) return;

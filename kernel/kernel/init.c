@@ -8,6 +8,7 @@
 #include <drivers/uart/serial.h>
 #include <drivers/console.h>
 #include <arch/x86_64/cpu/gdt.h>
+#include <arch/x86_64/cpu/idt.h>
 #include <arch/x86_64/asm.h>
 #include <kernel/init.h>
 #include <kernel/kernel.h>
@@ -55,10 +56,12 @@ void init(void)
 	serial_init();
 	serial_puts("\033[2J\033[H");
 	serial_puts("Serial Initialized, Hello World!\n");
+	console_init(&kcon, DEFAULT_FONT, 0xFFFFFF, 0, 8);
+	kprintf("Console Initialized\n");
 
 	gdt_init();
-	serial_puts("GDT Initialized\n");
-	console_init(&kcon, DEFAULT_FONT, 0xFFFFFF, 0, 8);
-	console_write(&kcon, "Hello World!\n");
+	kprintf("GDT Initialized\n");
 
+	idt_init();
+	kprintf("IDT Initialized\n");
 }
