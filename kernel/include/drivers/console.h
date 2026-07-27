@@ -5,6 +5,9 @@
 #include <stdbool.h>
 #include <utils/psf.h>
 
+/* Console Header
+ * @warning other console can take over the screen
+ */
 struct console {
 	uint32_t colfg, colbg;
 	uint32_t cursx;
@@ -14,6 +17,7 @@ struct console {
 	uint8_t tab_width;
 	struct psf_font font;
 };
+
 
 /* initializes console (con) 
  * @param font - is the psf data, default DEFAULT_FONT

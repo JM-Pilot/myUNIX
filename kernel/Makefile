@@ -26,7 +26,8 @@ C_FLAGS = \
 	-mno-sse2 \
 	-mno-red-zone \
 	-mcmodel=kernel \
-	-Iinclude
+	-Iinclude \
+	-Iinclude/lib
 
 
 LD_FLAGS = \

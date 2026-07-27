@@ -3,3 +3,4 @@ tools/
 kernel/bin/
 **/bin/
 build/
+qemu_logs.txt

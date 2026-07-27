@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 #include <drivers/console.h>
 #include <drivers/video/framebuffer.h>
 #include <utils/psf.h>
@@ -20,11 +21,28 @@ void console_init(struct console *con,
 					con->font.psf1->glyph_size : con->font.psf2->height);
 }
 
+/* scrolls up the framebuffer using the font height and clear the last row
+ * helper function for _newline
+ */
+static void _scroll_up(struct console *con)
+{
+	int font_height = (con->font.type == PSF1_MAGIC2 ? con->font.psf2->height : con->font.psf1->glyph_size);
+	uint8_t *addr = (uint8_t*)(uintptr_t)framebuffer->address;
+	uint32_t pitch = framebuffer->pitch;
+	uint32_t height = framebuffer->height;
+	/* move up */
+	memmove(addr, addr + pitch * font_height, pitch * (height - font_height));
+	/* clear last row */
+	memset(addr + pitch * (height - font_height), 0, pitch * font_height);
+}
+/* helper function to _putc */
 static void _newline(struct console *con)
 {
 	con->cursx = 0;
-	if (++(con->cursy) >= con->maxcy)
+	if (++(con->cursy) >= con->maxcy) {
+		_scroll_up(con);
 		con->cursy--;
+	}
 }
 /* helper function for console_write */
 static void _putc(struct console *con, char c)

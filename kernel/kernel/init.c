@@ -6,10 +6,18 @@
 #include <boot/requests.h>
 #include <drivers/video/framebuffer.h>
 #include <drivers/uart/serial.h>
+#include <drivers/console.h>
 #include <arch/x86_64/cpu/gdt.h>
 #include <arch/x86_64/asm.h>
 #include <kernel/init.h>
-#include <drivers/console.h>
+#include <kernel/kernel.h>
+#include <utils/kprint.h>
+
+
+/* globals we need to define */
+struct console kcon;
+
+
 
 /* limine stuff */
 __attribute__((used, section(".limine_requests")))
@@ -26,6 +34,9 @@ static volatile uint64_t limine_requests_start_marker[] = LIMINE_REQUESTS_START_
 
 __attribute__((used, section(".limine_requests_end")))
 static volatile uint64_t limine_requests_end_marker[] = LIMINE_REQUESTS_END_MARKER;
+
+
+
 
 /* reboot if the request is invalid */
 void init_check_requests(void)
@@ -47,7 +58,7 @@ void init(void)
 
 	gdt_init();
 	serial_puts("GDT Initialized\n");
-	struct console kernel_con;
-	console_init(&kernel_con, DEFAULT_FONT, 0xFFFFFF, 0, 8);
-	console_write(&kernel_con, "Hello World!\n");
+	console_init(&kcon, DEFAULT_FONT, 0xFFFFFF, 0, 8);
+	console_write(&kcon, "Hello World!\n");
+
 }
