@@ -39,12 +39,12 @@ struct sdt_header {
 struct rsdt_header {
 	struct sdt_header sdt;
 	uint32_t entries[];
-};
+}__attribute__((packed));
 
 struct xsdt_header {
 	struct sdt_header sdt;
 	uint64_t entries[];
-};
+}__attribute__((packed));
 
 /* global rsdt */
 extern struct rsdt_header *acpi_rsdt;

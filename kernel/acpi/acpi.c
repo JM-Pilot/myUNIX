@@ -47,6 +47,18 @@ void acpi_init(void)
 		}
 		uint64_t entries = (xsdt->sdt.length - sizeof(xsdt->sdt)) / 8;
 		kprintf("XSDT ENTRIES: %u\n", entries);
+
+		/* print all entries */
+		for (uint64_t i = 0; i < entries; i++) {
+			kprintf("XSDT ENTRY %#u: ", i);
+			uint64_t phys = xsdt->entries[i];
+			struct sdt_header *h = (struct sdt_header*)(phys + hhdm_offset);
+			_putcl(h->signature, 4);
+			kprintf("\n");
+
+			/* select the entry then do what you need to do */
+		}
+
 	} else {
 		kprintf("XSDP RSDP Address: %p\n", xsdp->rsdp.rsdt_address);
 		uint32_t rsdt_phys = (uint32_t)xsdp->rsdp.rsdt_address;
@@ -57,6 +69,14 @@ void acpi_init(void)
 		}
 		uint32_t entries = (rsdt->sdt.length - sizeof(rsdt->sdt)) / 4;
 		kprintf("RSDT ENTRIES: %u\n", entries);
+
+		for (uint32_t i = 0; i < entries; i++) {
+			kprintf("RSDT ENTRY %#u: ", i);
+			uint32_t phys = rsdt->entries[i];
+			struct sdt_header *h = (struct sdt_header*)(phys + hhdm_offset);
+			_putcl(h->signature, 4);
+			kprintf("\n");
+		}
 	}
 }
 
