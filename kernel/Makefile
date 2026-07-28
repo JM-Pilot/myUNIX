@@ -36,7 +36,7 @@ LD_FLAGS = \
 	   -ffreestanding \
 	   -nostdlib \
 	   -O2 \
-	   -T boot/linker.ld 
+	   -T arch/x86_64/boot/linker.ld 
 
 C_SRCS = $(shell find . -iname "*.c" -printf "%P\n")
 C_OBJS = $(patsubst %.c, $(BIN)/%.o, $(C_SRCS))
