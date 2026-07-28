@@ -71,7 +71,7 @@ void interrupt_handler(struct interrupt_frame *iframe)
 {
 	if (iframe->int_number < 32) {
 		kprintf("\n\n=============INTERRUPT REACHED!============\n");
-		kprintf("INTERRUPT: %s (%lu), ERROR CODE: %lu\n",
+		kprintf("INTERRUPT: %s (%#.2lx), ERROR CODE: %lu\n",
 			exceptions[iframe->int_number], iframe->int_number,
 			iframe->error_code);
 

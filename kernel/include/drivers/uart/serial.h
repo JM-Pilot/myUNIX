@@ -18,4 +18,6 @@ char serial_readc(void);
 
 void serial_switch(uint16_t port);
 
+/* printf for serial */
+int serial_printf(const char *fmt, ...);
 #endif /* DRIVERS_UART_SERIAL_H */

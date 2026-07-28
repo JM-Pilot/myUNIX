@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <drivers/uart/serial.h>
 #include <arch/x86_64/asm.h>
-
+#include <utils/kprint.h>
 /* our serial port */
 static uint16_t serial_port = SERIAL_COM1;
 
@@ -95,4 +95,16 @@ void serial_switch(uint16_t port)
 		serial_port = SERIAL_COM1;
 	serial_port = port;
 	serial_init();
+}
+
+int serial_printf(const char *fmt, ...)
+{
+	char buf[2048];
+	va_list args;
+	va_start(args, fmt);
+
+	int cpd = kvsprintf(buf, fmt, args);
+	va_end(args);
+	serial_puts(buf);
+	return cpd;
 }

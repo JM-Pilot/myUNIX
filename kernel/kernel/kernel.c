@@ -4,6 +4,7 @@ void kernel_main(void)
 {
 	init_check_requests();
 	init();
+	
 	/*
 	 * __asm__ volatile ("sti");
 	 * while (1);
