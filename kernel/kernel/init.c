@@ -111,9 +111,12 @@ void init(void)
 	k_heapBMInit(&kheap);
 	kprintf("HEAP Initialized\n");
 
-	acpi_init();
-	kprintf("ACPI Initialized\n");
-	
 	lapic_init();
 	kprintf("LAPIC Initialized\n");
+
+	/* this calls madt_parse so no need to call it */
+	acpi_init();
+	kprintf("ACPI Initialized\n");
+
+	kprintf("Done Init!\n");
 }

@@ -5,10 +5,10 @@
 #include <arch/x86_64/apic.h>
 #include <arch/x86_64/asm.h>
 #include <arch/x86_64/cpuid.h>
+#include <arch/x86_64/madt.h>
 #include <kernel/kernel.h>
 #include <utils/kprint.h>
 #include <mm/vmm.h>
-
 static volatile uint8_t *lapic_base;
 
 /* sets the base for the lapic */
@@ -97,8 +97,42 @@ void lapic_eoi(void)
 }
 
 
-/* initialize the ioapic */
-void ioapic_init(void)
+uint32_t ioapic_read(void *ioapic_addr, uint32_t reg)
 {
+	volatile uint32_t *ioapic = (volatile uint32_t*)ioapic_addr;
+	ioapic[0] = (reg & 0xff);
+	return ioapic[4];
+}
 
+void ioapic_write(void *ioapic_addr, uint32_t reg, uint32_t value)
+{
+	volatile uint32_t *ioapic = (volatile uint32_t*)ioapic_addr;
+	ioapic[0] = (reg & 0xff);
+	ioapic[4] = value;
+}
+/* initialize the ioapic */
+void ioapic_init(struct madt_ioapic *ioapic)
+{
+	disable_pic();
+    
+	uint64_t phys_addr = ioapic->ioapic_addr;
+
+	uint64_t virt_addr = phys_addr;
+	uint64_t flags = PTE_PRESENT | PTE_MMIO_FLAGS; 
+
+	vmm_map_page(virt_addr, phys_addr, flags);
+
+	void *ioapic_addr = (void*)virt_addr;
+
+	uint32_t ver = ioapic_read(ioapic_addr, IOAPICVER);
+	uint8_t max_redir_entry = ((ver >> 16) & 0xFF) + 1;
+	for (uint8_t i = 0; i < max_redir_entry; i++) {
+		uint8_t vector = 0x20 + i;
+		uint32_t reg_low = IOAPICTBL + (i * 2);
+		uint32_t reg_high = reg_low + 1;
+
+		ioapic_write(ioapic_addr, reg_low, 0x00010000 | vector);
+		ioapic_write(ioapic_addr, reg_high, 0x00000000);
+		ioapic_write(ioapic_addr, reg_low, vector);
+	}
 }
