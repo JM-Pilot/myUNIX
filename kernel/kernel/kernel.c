@@ -3,6 +3,7 @@
 #include <utils/kprint.h>
 #include <string.h>
 #include <kernel/kernel.h>
+#include <drivers/timers/hpet.h>
 void kernel_main(void)
 {
 	init_check_requests();

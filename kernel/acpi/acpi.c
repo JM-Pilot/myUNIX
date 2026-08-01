@@ -2,9 +2,10 @@
 #include <stdint.h>
 #include <string.h>
 #include <utils/kprint.h>
+#include <kernel/kernel.h>
 #include <boot/requests.h>
 #include <arch/x86_64/madt.h>
-
+#include <drivers/timers/hpet.h>
 
 void acpi_init(void)
 {
@@ -34,6 +35,10 @@ void acpi_init(void)
 
 			if (strncmp(entry->signature, "APIC", 4) == 0) {
 				madt_parse((struct madt_header*)entry);
+			}
+			else if (strncmp(entry->signature, "HPET", 4) == 0) {
+				hpet_init((struct hpet_header*)entry);
+				kprint(KLOG_WARN, "HPET Initialized\n");
 			}
 		}
 
