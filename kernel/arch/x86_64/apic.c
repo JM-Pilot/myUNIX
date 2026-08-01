@@ -26,11 +26,11 @@ void init_lapic_base(void) {
 	set_lapic_base(virtual_base);
 }
 
-uint32_t read_reg(uint32_t offset) {
+uint32_t lapic_read_reg(uint32_t offset) {
 	return *(volatile uint32_t *)(lapic_base + offset);
 }
 
-void write_reg(uint32_t offset, uint32_t value) {
+void lapic_write_reg(uint32_t offset, uint32_t value) {
 	*(volatile uint32_t *)(lapic_base + offset) = value;
 }
 
@@ -74,14 +74,13 @@ uintptr_t cpu_get_apic_base(void)
 	return (eax & 0xfffff000);
 #endif
 }
-void apic_init(void)
+void lapic_init(void)
 {
 	if (!check_apic()) {
 		panic("NO APIC FOUND\n");
 		/* todo remove panic and fallback to PIC */
 	}
-	disable_pic();
 	cpu_set_apic_base(cpu_get_apic_base());
 	init_lapic_base();
-	write_reg(0xF0, read_reg(0xF0) | 0x100);
+	lapic_write_reg(0xF0, lapic_read_reg(0xF0) | 0x100);
 }

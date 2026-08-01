@@ -94,7 +94,6 @@ struct madt_proc_x2apic {
 /* disable the legacy PIC (i8259) */
 void disable_pic(void);
 
-/* initialize apic */
-void apic_init(void);
-
+/* initialize lapic */
+void lapic_init(void);
 #endif /* ARCH_X86_64_APIC_H */

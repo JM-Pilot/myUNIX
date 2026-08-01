@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 
+size_t getmem(void);
 void pmm_init(void);
 void pmm_free_page(size_t base, size_t length);
 void pmm_alloc_page(size_t base, size_t length);

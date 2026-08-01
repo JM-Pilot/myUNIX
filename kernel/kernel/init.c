@@ -102,17 +102,19 @@ void init(void)
 	idt_init();
 	kprintf("IDT Initialized\n");
 
+	/* MOST IMPORTANT */
 	pmm_init();
 	kprintf("PMM Initialized\n");
 	
 	vmm_init();
 	kprintf("VMM Initialized\n");
-	
+		
+	kprintf("Memory: %lu MB\n", getmem() / (1024 * 1024));
 	acpi_init();
 	kprintf("ACPI Initialized\n");
 	
-	apic_init();
-	kprintf("APIC Initialized\n");
-
+	lapic_init();
+	kprintf("LAPIC Initialized\n");
+	
 	kprintf("Init Done\n");
 }

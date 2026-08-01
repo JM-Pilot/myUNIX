@@ -99,11 +99,8 @@ void pmm_init(void)
 			hi_addr = top;
 	}
 
-	kprintf("PMM HIGHEST ADDR: %#lx\n", hi_addr);
 	total_pages = hi_addr / PAGE_SIZE;
-	kprintf("PMM TOTAL PAGES: %lu\n", total_pages);
 	bitmap_size = total_pages / 8;
-	kprintf("PMM BITMAP SIZE: %lu\n", bitmap_size);
 
 	/* find a good spot to place the bitmap */
 	uint64_t bitmap_phys = 0;
@@ -121,7 +118,6 @@ void pmm_init(void)
 	}
 
 	bitmap = (uint8_t*)(bitmap_phys + hhdm->offset);
-	kprintf("PMM BITMAP ADDR: %#lx\n", bitmap);
 
 	/* set all to used */
 	memset(bitmap, 0xFF, bitmap_size);
@@ -139,4 +135,18 @@ void pmm_init(void)
 
 	/* reserve null */
 	bitmap[0] |= (1 << 0);
+}
+
+/* @return All available memory in bytes (`LIMINE_MEMMAP_USABLE`) */
+size_t getmem(void)
+{
+	struct limine_memmap_response *mmap = mmap_request.response;
+	size_t mem = 0;
+	for (size_t i = 0; i < mmap->entry_count; i++) {
+		struct limine_memmap_entry *mmap_entry = mmap->entries[i];
+		if (mmap_entry->type == LIMINE_MEMMAP_USABLE) {
+			mem += mmap_entry->length;
+		}
+	}
+	return mem;
 }
