@@ -63,9 +63,6 @@ run-efi: tools-edk2 iso
 		$(QEMU_FLAGS) \
 		-serial stdio 
 
-# use this if your terminal is broken
-#| stdbuf -oL sed -E '/\x1b\[2J\x1b\[H/b; s/\x1b\[[0-9;?]*[a-zA-Z]//g; s/\r//g'
-
 clean:
 	@printf "\033[31mCleaning Up\033[0m\n"
 	rm -rf $(BUILD)

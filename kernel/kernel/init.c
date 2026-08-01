@@ -13,14 +13,16 @@
 #include <arch/x86_64/asm.h>
 #include <kernel/init.h>
 #include <kernel/kernel.h>
+#include <kernel/malloc.h>
 #include <utils/kprint.h>
 #include <acpi/acpi.h>
 #include <mm/pmm.h>
 #include <mm/vmm.h>
-
+#include <mm/heap.h>
 /* globals we need to define */
 struct console kcon;
 
+KHEAPBM kheap;
 
 
 /* limine stuff */
@@ -89,20 +91,29 @@ void init(void)
 
 	/* initialize our console ;) */
 	console_init(&kcon, FONT_TER_V18N, 0xFFFFFF, 0, 8);
+	kprintf("Console Initialized\n");
 
 	/* cpu stuff */
 	gdt_init();
-
+	kprintf("GDT Initialized\n");
 	idt_init();
+	kprintf("IDT Initialized\n");
 
 	/* MOST IMPORTANT */
 	pmm_init();
+	kprintf("PMM Initialized\n");
+	kprintf("Memory: %lu MB\n", getmem() / (1024 * 1024));
 	
 	vmm_init();
+	kprintf("VMM Initialized\n");
 		
-	kprintf("Memory: %lu MB\n", getmem() / (1024 * 1024));
+	/* init kernel heap */
+	k_heapBMInit(&kheap);
+	kprintf("HEAP Initialized\n");
 
 	acpi_init();
+	kprintf("ACPI Initialized\n");
 	
 	lapic_init();
+	kprintf("LAPIC Initialized\n");
 }

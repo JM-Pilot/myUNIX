@@ -8,7 +8,6 @@ void kernel_main(void)
 	init_check_requests();
 	init();
 	
-	panic("Test");
 	/*
 	 * __asm__ volatile ("sti");
 	 * while (1);
