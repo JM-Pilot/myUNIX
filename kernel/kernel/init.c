@@ -9,12 +9,14 @@
 #include <drivers/console.h>
 #include <arch/x86_64/cpu/gdt.h>
 #include <arch/x86_64/cpu/idt.h>
+#include <arch/x86_64/apic.h>
 #include <arch/x86_64/asm.h>
 #include <kernel/init.h>
 #include <kernel/kernel.h>
 #include <utils/kprint.h>
 #include <acpi/acpi.h>
 
+#include <mm/pmm.h>
 /* globals we need to define */
 struct console kcon;
 
@@ -42,6 +44,11 @@ volatile struct limine_hhdm_request hhdm_request = {
 	.revision = 0
 };
 
+__attribute__((used, section(".limine_requests")))
+volatile struct limine_memmap_request mmap_request = {
+	.id = LIMINE_MEMMAP_REQUEST_ID,
+	.revision = 0
+};
 
 __attribute__((used, section(".limine_requests_start")))
 static volatile uint64_t limine_requests_start_marker[] = LIMINE_REQUESTS_START_MARKER;
@@ -65,17 +72,22 @@ void init_check_requests(void)
 		io_outb(0x64, 0xFE);
 	if (hhdm_request.response == NULL)
 		io_outb(0x64, 0xFE);
+
+	if (mmap_request.response == NULL)
+		io_outb(0x64, 0xFE);
 }
 
 /* initialize important kernel functions */
 void init(void)
 {
+	__asm__ volatile ("cli");
 	framebuffer_init();
 	serial_init();
 	serial_puts("\033[2J\033[H");
 	serial_puts("Serial Initialized, Hello World!\n");
+
 	/* initialize our console ;) */
-	console_init(&kcon, DEFAULT_FONT, 0xFFFFFF, 0, 8);
+	console_init(&kcon, FONT_TER_V18N, 0xFFFFFF, 0, 8);
 	kprintf("Console Initialized\n");
 
 	kprintf("Console Dimensions: %ux%u Cells\n", kcon.maxcx, kcon.maxcy);
@@ -89,6 +101,14 @@ void init(void)
 	idt_init();
 	kprintf("IDT Initialized\n");
 
+	pmm_init();
+	kprintf("PMM Initialized\n");
+	/* TODO AFTER PMM AND VMM, MAP STUFF AND INIT THESE */
 	acpi_init();
 	kprintf("ACPI Initialized\n");
+
+	//apic_init();
+	//kprintf("APIC Initialized\n");
+
+	kprintf("Init Done\n");
 }

@@ -5,4 +5,6 @@
 /* the console for the entire kernel */
 extern struct console kcon;
 
+/* kernel panic */
+void panic(const char* msg);
 #endif /* KERNEL_H */

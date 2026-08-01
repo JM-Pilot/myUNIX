@@ -41,6 +41,10 @@ void acpi_init(void)
 		uint64_t xsdt_phys = (uint64_t)xsdp->xsdt_address;
 		struct xsdt_header *xsdt = (struct xsdt_header*)(xsdt_phys + hhdm_offset);
 
+		kprintf("XSDT SIGNATURE: ");
+		_putcl(xsdt->sdt.signature, 4);
+		kprintf("\n");
+
 		if (!sdt_verify_checksum(&xsdt->sdt)) {
 			kprintf("XSDT.SDT INVALID\n");
 			return;
@@ -60,9 +64,13 @@ void acpi_init(void)
 		}
 
 	} else {
-		kprintf("XSDP RSDP Address: %p\n", xsdp->rsdp.rsdt_address);
+		kprintf("XSDP.RSDP Address: %p\n", xsdp->rsdp.rsdt_address);
 		uint32_t rsdt_phys = (uint32_t)xsdp->rsdp.rsdt_address;
+		
 		struct rsdt_header *rsdt = (struct rsdt_header*)(rsdt_phys + hhdm_offset);
+		kprintf("RSDT SIGNATURE: ");
+		_putcl(rsdt->sdt.signature, 4);
+		kprintf("\n");
 		if (!sdt_verify_checksum(&rsdt->sdt)) {
 			kprintf("RSDT.SDT INVALID\n");
 			return;

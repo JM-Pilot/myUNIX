@@ -2,6 +2,8 @@
 #define ARCH_X86_64_ASM_H
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <cpuid.h>
 
 static inline void io_outb(uint16_t port, uint8_t val)
 {
@@ -24,5 +26,50 @@ static inline void hcf(void)
 	for (;;) __asm__ volatile ("hlt");
 }
 
+#define CPUID_FLAG_MSR 1 << 5;
 
+static inline bool cpu_has_msr()
+{
+	uint32_t eax, edx, unused;
+	__get_cpuid(1, &eax, &unused, &unused, &edx);
+	return edx & CPUID_FLAG_MSR;
+}
+
+static inline void cpu_set_msr(uint32_t msr, uint32_t lo, uint32_t hi)
+{
+	asm volatile("wrmsr" : : "a"(lo), "d"(hi), "c"(msr));
+}
+
+static inline void cpu_get_msr(uint32_t msr, uint32_t *lo, uint32_t *hi)
+{
+	asm volatile("rdmsr" : "=a"(*lo), "=d"(*hi) : "c"(msr));
+}
+
+
+static inline uint64_t rdmsr(uint32_t msr)
+{
+	uint32_t lo;
+	uint32_t hi;
+
+	asm volatile (
+		"rdmsr"
+		: "=a"(lo), "=d"(hi)
+		: "c"(msr)
+	);
+
+	return ((uint64_t)hi << 32) | lo;
+}
+
+static inline void wrmsr(uint32_t msr, uint64_t value)
+{
+	uint32_t lo = (uint32_t)value;
+	uint32_t hi = (uint32_t)(value >> 32);
+
+	asm volatile (
+		"wrmsr"
+		:
+		: "c"(msr), "a"(lo), "d"(hi)
+		: "memory"
+	);
+}
 #endif /* ARCH_X86_64_ASM_H */

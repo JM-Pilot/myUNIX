@@ -4,7 +4,11 @@
 #include <stdint.h>
 
 extern uint8_t _binary_assets_fonts_ter_u16n_psf_start[];
-#define DEFAULT_FONT _binary_assets_fonts_ter_u16n_psf_start
+#define FONT_TER_U16N _binary_assets_fonts_ter_u16n_psf_start
+extern uint8_t _binary_assets_fonts_ter_v18n_psf_start[];
+#define FONT_TER_V18N _binary_assets_fonts_ter_v18n_psf_start
+
+#define DEFAULT_FONT FONT_TER_U16N
 
 /* psf1 magic */
 #define PSF1_MAGIC1 0x36

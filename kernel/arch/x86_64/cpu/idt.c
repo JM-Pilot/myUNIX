@@ -75,6 +75,11 @@ void interrupt_handler(struct interrupt_frame *iframe)
 			exceptions[iframe->int_number], iframe->int_number,
 			iframe->error_code);
 
+		if (iframe->int_number == 0xE) {
+			uint64_t value;
+    			__asm__ volatile ("mov %%cr2, %0" : "=r"(value));
+			kprintf("CR2: %lx\n", value);
+		}
 		kprintf("=================REGISTERS=================\n");
 		kprintf("RAX: %#lx, RBX: %#lx, RCX: %#lx, RDX: %#lx\n",
 			iframe->rax, iframe->rbx, iframe->rcx, iframe->rdx);
