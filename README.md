@@ -12,8 +12,6 @@ To compile you must have the required tools:
 ```sh
 x86_64-elf-gcc
 nasm
-
-# optional tools
 xorriso
 wget
 git
@@ -39,6 +37,8 @@ type `$ make help` for more information about building.
 
 <h4>Check out other projects</h4>
 
+Predecessor:
 [mynix v1](https://github.com/JM-Pilot/mynix)
 
+I got inspired by:
 [C-kernel-OS](https://github.com/orca-pet3910YT/C-kernel-OS)
