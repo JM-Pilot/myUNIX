@@ -94,6 +94,32 @@ isr_stub_table:
 %assign i i+1 
 %endrep
 
+; IRQS 
+ISR_NO_ERROR 32
+ISR_NO_ERROR 33
+ISR_NO_ERROR 34
+ISR_NO_ERROR 35
+ISR_NO_ERROR 36
+ISR_NO_ERROR 37
+ISR_NO_ERROR 38
+ISR_NO_ERROR 39
+ISR_NO_ERROR 40
+ISR_NO_ERROR 41
+ISR_NO_ERROR 42
+ISR_NO_ERROR 43
+ISR_NO_ERROR 44
+ISR_NO_ERROR 45
+ISR_NO_ERROR 46
+ISR_NO_ERROR 47
+
+global irq_stub_table
+irq_stub_table:
+%assign i 32
+%rep    16
+	dq isr_stub_%+i
+%assign i i+1 
+%endrep
+
 extern interrupt_handler
 isr_handler:
 	cld 	; sysv requires

@@ -8,9 +8,18 @@ void kernel_main(void)
 	init_check_requests();
 	init();
 	
-	// __asm__ volatile ("sti");
-	// while (1);
+	/* for some reason i like the orange color */
+	kprint(KLOG_WARN, "Welcome to mynix-v2!\n");
 
+	/* we have stuff to turn on interrupts now 
+	 * todo: Make a scheduler and start process 1
+	 */
+	__asm__ volatile ("sti");
+	while (1) {
+		__asm__("nop");
+	}
+
+	/* not reached */
 	hcf();
 }
 

@@ -26,14 +26,14 @@ void console_init(struct console *con,
  */
 static void _scroll_up(struct console *con)
 {
-	int font_height = (con->font.type == PSF1_MAGIC2 ? con->font.psf2->height : con->font.psf1->glyph_size);
+	int font_height = (con->font.type == PSF_TYPE_V2 ? con->font.psf2->height : con->font.psf1->glyph_size);
 	uint8_t *addr = (uint8_t*)(uintptr_t)framebuffer->address;
 	uint32_t pitch = framebuffer->pitch;
 	uint32_t height = framebuffer->height;
 	/* move up */
 	memmove(addr, addr + pitch * font_height, pitch * (height - font_height));
 	/* clear last row */
-	memset(addr + pitch * (height - font_height), 0, pitch * font_height);
+	memset(addr + pitch * (height - font_height), con->colbg, pitch * font_height);
 }
 /* helper function to _putc */
 static void _newline(struct console *con)
@@ -58,6 +58,9 @@ static void _putc(struct console *con, char c)
 			return;
 		case '\t':
 			con->cursx += con->tab_width - (con->cursx % con->tab_width);
+			if (con->cursx >= con->maxcx) {
+				_newline(con);
+			}
 			return;
 		case '\b':
 			if (con->cursx == 0) return;

@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <arch/x86_64/cpu/idt.h>
 #include <arch/x86_64/cpu/gdt.h>
+#include <arch/x86_64/cpu/irq.h>
 #include <arch/x86_64/asm.h>
 #include <utils/kprint.h>
 /* performance!! */
@@ -69,6 +70,9 @@ static const char *exceptions[] = {
 
 void interrupt_handler(struct interrupt_frame *iframe)
 {
+	if (iframe->int_number >= 32) {
+		irq_handle(iframe->int_number - 32, iframe);
+	}
 	if (iframe->int_number < 32) {
 		kprintf("\n\n=============INTERRUPT REACHED!============\n");
 		kprintf("INTERRUPT: %s (%#.2lx), ERROR CODE: %lu\n",

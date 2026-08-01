@@ -9,6 +9,7 @@
 #include <drivers/console.h>
 #include <arch/x86_64/cpu/gdt.h>
 #include <arch/x86_64/cpu/idt.h>
+#include <arch/x86_64/cpu/irq.h>
 #include <arch/x86_64/apic.h>
 #include <arch/x86_64/asm.h>
 #include <kernel/init.h>
@@ -118,5 +119,8 @@ void init(void)
 	acpi_init();
 	kprintf("ACPI Initialized\n");
 
+	irq_init();
+	kprintf("IRQ Loaded\n");
+	
 	kprintf("Done Init!\n");
 }

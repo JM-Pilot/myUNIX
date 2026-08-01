@@ -93,7 +93,7 @@ void lapic_init(void)
 /* Send an END OF EOI to apic eoi (0xB0)*/
 void lapic_eoi(void)
 {
-	io_outb(0xB0, 0);
+	lapic_write_reg(0xB0, 0);
 }
 
 
