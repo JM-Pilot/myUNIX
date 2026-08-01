@@ -1,7 +1,9 @@
 #include <acpi/acpi.h>
 #include <stdint.h>
+#include <string.h>
 #include <utils/kprint.h>
 #include <boot/requests.h>
+#include <arch/x86_64/madt.h>
 
 
 void acpi_init(void)
@@ -29,6 +31,10 @@ void acpi_init(void)
 			uint64_t phys = xsdt->entries[i];
 			struct sdt_header *entry = (struct sdt_header*)(phys + hhdm_offset);
 			/* select the entry then do what you need to do */
+
+			if (strncmp(entry->signature, "APIC", 4) == 0) {
+				madt_parse((struct madt_header*)entry);
+			}
 		}
 
 	} else {
@@ -42,8 +48,9 @@ void acpi_init(void)
 
 		for (uint32_t i = 0; i < entries; i++) {
 			uint32_t phys = rsdt->entries[i];
-			struct sdt_header *h = (struct sdt_header*)(phys + hhdm_offset);
+			struct sdt_header *entry = (struct sdt_header*)(phys + hhdm_offset);
 			/* select the entry then do what you need to do */
+			(void)entry;
 		}
 	}
 }

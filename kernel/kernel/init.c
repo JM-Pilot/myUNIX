@@ -89,32 +89,20 @@ void init(void)
 
 	/* initialize our console ;) */
 	console_init(&kcon, FONT_TER_V18N, 0xFFFFFF, 0, 8);
-	kprintf("Console Initialized\n");
-
-	kprintf("Console Dimensions: %ux%u Cells\n", kcon.maxcx, kcon.maxcy);
-	kprintf("Framebuffer Info: %ux%ux%u (WxHxBPP)\n", 
-		framebuffer->width, framebuffer->height, framebuffer->bpp);
 
 	/* cpu stuff */
 	gdt_init();
-	kprintf("GDT Initialized\n");
 
 	idt_init();
-	kprintf("IDT Initialized\n");
 
 	/* MOST IMPORTANT */
 	pmm_init();
-	kprintf("PMM Initialized\n");
 	
 	vmm_init();
-	kprintf("VMM Initialized\n");
 		
 	kprintf("Memory: %lu MB\n", getmem() / (1024 * 1024));
+
 	acpi_init();
-	kprintf("ACPI Initialized\n");
 	
 	lapic_init();
-	kprintf("LAPIC Initialized\n");
-	
-	kprintf("Init Done\n");
 }

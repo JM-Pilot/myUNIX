@@ -2,11 +2,13 @@
 #include <arch/x86_64/asm.h>
 #include <utils/kprint.h>
 #include <string.h>
+#include <kernel/kernel.h>
 void kernel_main(void)
 {
 	init_check_requests();
 	init();
 	
+	panic("Test");
 	/*
 	 * __asm__ volatile ("sti");
 	 * while (1);
@@ -16,11 +18,11 @@ void kernel_main(void)
 
 void panic(const char* msg)
 {
-	kprintf("\n\nPANIC!!!\n");
-	kprintf("AN UNRECOVERABLE ERROR HAS OCCURED!\n\n");
+	kprint(KLOG_ERROR, "\n\nPANIC!!!\n");
+	kprint(KLOG_ERROR, "AN UNRECOVERABLE ERROR HAS OCCURED!\n\n");
 
-	kprintf("MSG: %s\n", msg);
+	kprint(KLOG_ERROR, "MSG: %s\n", msg);
 
-	kprintf("MYNIX-V2 KERNEL PANIC\nREBOOT NOW\n");
+	kprint(KLOG_ERROR, "MYNIX-V2 KERNEL PANIC\nREBOOT NOW\n");
 	hcf();
 }

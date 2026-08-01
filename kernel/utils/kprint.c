@@ -4,7 +4,6 @@
 #include <utils/kprint.h>
 #include <kernel/kernel.h>
 #include <drivers/uart/serial.h>
-
 /* helper function to turn integers to string 
  * @param buf -- output
  * @param precision -- minimum values printed (precision = 4, value = 0x1, output = 0x0001)
@@ -280,5 +279,33 @@ int kprintf(const char *fmt, ...)
 
 	console_write(&kcon, buf);
 	serial_puts(buf);
+	return ret;
+}
+
+int kprint(int log, const char *fmt, ...)
+{
+	uint32_t oldfg = kcon.colfg;
+	switch (log) {
+		case KLOG_WARN:
+			kcon.colfg = 0xFFA500;
+			break;
+		case KLOG_ERROR:
+			kcon.colfg = 0xFF0000;
+			break;
+		case KLOG_DEBUG:
+			kcon.colfg = 0x808080;
+			break;
+	}
+	char buf[2048];
+	va_list args;
+	va_start(args, fmt);
+
+	int ret = kvsprintf(buf, fmt, args);
+	va_end(args);
+
+	console_write(&kcon, buf);
+	serial_puts(buf);
+
+	kcon.colfg = oldfg;
 	return ret;
 }

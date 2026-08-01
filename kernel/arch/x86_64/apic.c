@@ -11,14 +11,15 @@
 
 static volatile uint8_t *lapic_base;
 
-
 /* sets the base for the lapic */
-void set_lapic_base(uintptr_t base) {
+void set_lapic_base(uintptr_t base) 
+{
 	lapic_base = (volatile uint8_t *)base;
 }
 
 /* initialize the base for the lapic */
-void init_lapic_base(void) {
+void init_lapic_base(void) 
+{
 	uintptr_t physical_base = rdmsr(IA32_APIC_BASE_MSR) & 0xFFFFFFFFFFFFF000ULL;
 	uintptr_t virtual_base = hhdm_request.response->offset + physical_base;
 
@@ -26,11 +27,15 @@ void init_lapic_base(void) {
 	set_lapic_base(virtual_base);
 }
 
-uint32_t lapic_read_reg(uint32_t offset) {
+/* Read Register for LAPIC */
+uint32_t lapic_read_reg(uint32_t offset) 
+{
 	return *(volatile uint32_t *)(lapic_base + offset);
 }
 
-void lapic_write_reg(uint32_t offset, uint32_t value) {
+/* Write to Register for LAPIC */
+void lapic_write_reg(uint32_t offset, uint32_t value) 
+{
 	*(volatile uint32_t *)(lapic_base + offset) = value;
 }
 
@@ -83,4 +88,17 @@ void lapic_init(void)
 	cpu_set_apic_base(cpu_get_apic_base());
 	init_lapic_base();
 	lapic_write_reg(0xF0, lapic_read_reg(0xF0) | 0x100);
+}
+
+/* Send an END OF EOI to apic eoi (0xB0)*/
+void lapic_eoi(void)
+{
+	io_outb(0xB0, 0);
+}
+
+
+/* initialize the ioapic */
+void ioapic_init(void)
+{
+
 }
