@@ -1,20 +1,11 @@
 #ifndef ARCH_X86_64_MADT_H
 #define ARCH_X86_64_MADT_H
 #include <stdint.h>
-struct madt_sdt {
-	char signature[4];
-	uint32_t length;
-	uint8_t revision;
-	uint8_t checksum;
-	char oemid[6];
-	char oem_table_id[8];
-	uint32_t oem_revision;
-	uint32_t creator_id;
-	uint32_t creator_revision;
-}__attribute__((packed));
+#include <acpi/acpi.h>
+
 
 struct madt_header {
-	struct madt_sdt madt;
+	struct sdt_header madt;
 	uint32_t apic_address;
 	uint32_t flags;
 }__attribute__((packed));
