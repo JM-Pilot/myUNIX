@@ -75,3 +75,13 @@ clean-tools:
 	rm -rf $(TOOLS_DIR)
 
 clean-all: clean clean-tools
+
+help:
+	@echo "MAKEFILE HELP: "
+	@echo "make clean 	-- cleans the build and kernel/bin directory"
+	@echo "make clean-tools -- cleans the tools dir "
+	@echo "make clean-all 	-- clean all (tools, build, kernel/bin directory)"
+	@echo "make iso	-- makes the iso"
+	@echo "make kernel	-- makes the kernel"
+	@echo "make run 	-- runs the iso using qemu bios (x86_64)"
+	@echo "make run-efi	-- runs the iso using qemu uefi (x86_64)"
