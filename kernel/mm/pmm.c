@@ -1,4 +1,5 @@
 #include <mm/pmm.h>
+#include <mm/vmm.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <utils/kprint.h>

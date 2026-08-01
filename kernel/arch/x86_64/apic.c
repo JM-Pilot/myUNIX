@@ -7,7 +7,7 @@
 #include <arch/x86_64/cpuid.h>
 #include <kernel/kernel.h>
 #include <utils/kprint.h>
-
+#include <mm/vmm.h>
 
 static volatile uint8_t *lapic_base;
 
@@ -20,11 +20,10 @@ void set_lapic_base(uintptr_t base) {
 /* initialize the base for the lapic */
 void init_lapic_base(void) {
 	uintptr_t physical_base = rdmsr(IA32_APIC_BASE_MSR) & 0xFFFFFFFFFFFFF000ULL;
-	
-	set_lapic_base(hhdm_request.response->offset + physical_base);
+	uintptr_t virtual_base = hhdm_request.response->offset + physical_base;
 
-	kprintf("Physical APIC: %lx\n", (void *)physical_base);
-	kprintf("Virtual APIC : %lx\n", (void *)lapic_base);
+	vmm_map_page(virtual_base, physical_base, PTE_MMIO_FLAGS);
+	set_lapic_base(virtual_base);
 }
 
 uint32_t read_reg(uint32_t offset) {
@@ -77,21 +76,12 @@ uintptr_t cpu_get_apic_base(void)
 }
 void apic_init(void)
 {
-	kprintf("CHECKING APIC AVAIL\n");
 	if (!check_apic()) {
 		panic("NO APIC FOUND\n");
 		/* todo remove panic and fallback to PIC */
 	}
-
-	kprintf("DISABLING PIC\n");
 	disable_pic();
-
-	kprintf("SET APIC BASE\n");
 	cpu_set_apic_base(cpu_get_apic_base());
-	kprintf("INIT LAPIC BASE\n");
 	init_lapic_base();
-
-	kprintf("WRITING SVR\n");
-	
 	write_reg(0xF0, read_reg(0xF0) | 0x100);
 }

@@ -15,8 +15,9 @@
 #include <kernel/kernel.h>
 #include <utils/kprint.h>
 #include <acpi/acpi.h>
-
 #include <mm/pmm.h>
+#include <mm/vmm.h>
+
 /* globals we need to define */
 struct console kcon;
 
@@ -103,12 +104,15 @@ void init(void)
 
 	pmm_init();
 	kprintf("PMM Initialized\n");
-	/* TODO AFTER PMM AND VMM, MAP STUFF AND INIT THESE */
+	
+	vmm_init();
+	kprintf("VMM Initialized\n");
+	
 	acpi_init();
 	kprintf("ACPI Initialized\n");
-
-	//apic_init();
-	//kprintf("APIC Initialized\n");
+	
+	apic_init();
+	kprintf("APIC Initialized\n");
 
 	kprintf("Init Done\n");
 }

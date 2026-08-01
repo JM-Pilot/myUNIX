@@ -3,8 +3,6 @@
 
 #include <stddef.h>
 
-#define PAGE_SIZE 0x1000
-
 void pmm_init(void);
 void pmm_free_page(size_t base, size_t length);
 void pmm_alloc_page(size_t base, size_t length);

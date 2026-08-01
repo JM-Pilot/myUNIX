@@ -72,4 +72,8 @@ static inline void wrmsr(uint32_t msr, uint64_t value)
 		: "memory"
 	);
 }
+
+static inline void invlpg(uint64_t addr) {
+	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
+}
 #endif /* ARCH_X86_64_ASM_H */
