@@ -98,6 +98,14 @@ void init_check_requests(void)
 	}
 }
 
+void print_ascii_logo(void)
+{
+	kprintf(" __  __           _             ___  \n");
+	kprintf("|  \\/  |_  _ _ _ (_)_ _______ _|_  ) \n");
+	kprintf("| |\\/| | || | ' \\| \\ \\ /___\\ V // /  \n");
+	kprintf("|_|  |_|\\_, |_||_|_/_\\_\\    \\_//___| \n");
+	kprintf("         |__/                         \n");
+}
 /* initialize important kernel functions */
 void init(void)
 {
@@ -138,4 +146,5 @@ void init(void)
 	ps2_init();
 	kprintf("PS2 Initialized!\n");
 	kprintf("Done Init!\n");
+	print_ascii_logo();
 }
