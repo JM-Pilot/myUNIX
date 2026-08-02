@@ -3,7 +3,7 @@
 #include <utils/kprint.h>
 #include <string.h>
 #include <kernel/kernel.h>
-#include <drivers/timers/hpet.h>
+#include <drivers/input/ps2.h>
 void kernel_main(void)
 {
 	init_check_requests();
@@ -17,7 +17,7 @@ void kernel_main(void)
 	 */
 	__asm__ volatile ("sti");
 	while (1) {
-		__asm__("pause");
+		kprintf("%c", ps2_getc());
 	}
 
 	/* not reached */

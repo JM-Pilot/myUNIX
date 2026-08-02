@@ -7,6 +7,7 @@
 #include <drivers/video/framebuffer.h>
 #include <drivers/uart/serial.h>
 #include <drivers/console.h>
+#include <drivers/input/ps2.h>
 #include <arch/x86_64/cpu/gdt.h>
 #include <arch/x86_64/cpu/idt.h>
 #include <arch/x86_64/cpu/irq.h>
@@ -134,5 +135,7 @@ void init(void)
 	irq_init();
 	kprintf("IRQ Loaded\n");
 	
+	ps2_init();
+	kprintf("PS2 Initialized!\n");
 	kprintf("Done Init!\n");
 }

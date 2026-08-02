@@ -27,4 +27,6 @@ void ioapic_init(struct madt_ioapic *ioapic);
 /* disable the legacy PIC (i8259) */
 void disable_pic(void);
 
+void ioapic_route(uint8_t pin, uint8_t vector);
+
 #endif /* ARCH_X86_64_APIC_H */

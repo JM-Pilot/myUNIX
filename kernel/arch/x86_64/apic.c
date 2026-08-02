@@ -88,6 +88,7 @@ void lapic_init(void)
 	cpu_set_apic_base(cpu_get_apic_base());
 	init_lapic_base();
 	lapic_write_reg(0xF0, lapic_read_reg(0xF0) | 0x100);
+	lapic_write_reg(0x80, 0); 
 }
 
 /* Send an END OF EOI to apic eoi (0xB0)*/
@@ -110,6 +111,9 @@ void ioapic_write(void *ioapic_addr, uint32_t reg, uint32_t value)
 	ioapic[0] = (reg & 0xff);
 	ioapic[4] = value;
 }
+
+static void *ioapic_addr;
+
 /* initialize the ioapic */
 void ioapic_init(struct madt_ioapic *ioapic)
 {
@@ -117,12 +121,12 @@ void ioapic_init(struct madt_ioapic *ioapic)
     
 	uint64_t phys_addr = ioapic->ioapic_addr;
 
-	uint64_t virt_addr = phys_addr;
+	uint64_t virt_addr = hhdm_request.response->offset + phys_addr;
 	uint64_t flags = PTE_PRESENT | PTE_MMIO_FLAGS; 
 
 	vmm_map_page(virt_addr, phys_addr, flags);
 
-	void *ioapic_addr = (void*)virt_addr;
+	ioapic_addr = (void*)virt_addr;
 
 	uint32_t ver = ioapic_read(ioapic_addr, IOAPICVER);
 	uint8_t max_redir_entry = ((ver >> 16) & 0xFF) + 1;
@@ -135,4 +139,13 @@ void ioapic_init(struct madt_ioapic *ioapic)
 		ioapic_write(ioapic_addr, reg_high, 0x00000000);
 		ioapic_write(ioapic_addr, reg_low, vector);
 	}
+}
+
+void ioapic_route(uint8_t pin, uint8_t vector)
+{
+	uint32_t reg_low = IOAPICTBL + (pin * 2);
+	uint32_t reg_high = reg_low + 1;
+
+	ioapic_write(ioapic_addr, reg_high, 0x00000000);
+	ioapic_write(ioapic_addr, reg_low, vector);
 }
