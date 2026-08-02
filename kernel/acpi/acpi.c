@@ -31,7 +31,6 @@ void acpi_init(void)
 		for (uint64_t i = 0; i < entries; i++) {
 			uint64_t phys = xsdt->entries[i];
 			struct sdt_header *entry = (struct sdt_header*)(phys + hhdm_offset);
-			/* select the entry then do what you need to do */
 
 			if (strncmp(entry->signature, "APIC", 4) == 0) {
 				madt_parse((struct madt_header*)entry);
@@ -54,8 +53,14 @@ void acpi_init(void)
 		for (uint32_t i = 0; i < entries; i++) {
 			uint32_t phys = rsdt->entries[i];
 			struct sdt_header *entry = (struct sdt_header*)(phys + hhdm_offset);
-			/* select the entry then do what you need to do */
-			(void)entry;
+			
+			if (strncmp(entry->signature, "APIC", 4) == 0) {
+				madt_parse((struct madt_header*)entry);
+			}
+			else if (strncmp(entry->signature, "HPET", 4) == 0) {
+				hpet_init((struct hpet_header*)entry);
+				kprint(KLOG_WARN, "HPET Initialized\n");
+			}
 		}
 	}
 }

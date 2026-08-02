@@ -17,7 +17,7 @@ void kernel_main(void)
 	 */
 	__asm__ volatile ("sti");
 	while (1) {
-		__asm__("nop");
+		__asm__("pause");
 	}
 
 	/* not reached */
