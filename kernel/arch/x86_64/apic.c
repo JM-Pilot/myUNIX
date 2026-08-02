@@ -131,13 +131,11 @@ void ioapic_init(struct madt_ioapic *ioapic)
 	uint32_t ver = ioapic_read(ioapic_addr, IOAPICVER);
 	uint8_t max_redir_entry = ((ver >> 16) & 0xFF) + 1;
 	for (uint8_t i = 0; i < max_redir_entry; i++) {
-		uint8_t vector = 0x20 + i;
 		uint32_t reg_low = IOAPICTBL + (i * 2);
 		uint32_t reg_high = reg_low + 1;
 
-		ioapic_write(ioapic_addr, reg_low, 0x00010000 | vector);
 		ioapic_write(ioapic_addr, reg_high, 0x00000000);
-		ioapic_write(ioapic_addr, reg_low, vector);
+		ioapic_write(ioapic_addr, reg_low, 0x00010000);
 	}
 }
 

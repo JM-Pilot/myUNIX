@@ -7,6 +7,12 @@
 #include <drivers/input/ps2.h>
 #include <utils/kprint.h>
 
+/* global scancode (pressed), used by ps2_getc */
+static uint8_t scancode;
+/* global scancode (released) */
+static uint8_t scancode_rel;
+static bool is_shift;
+
 /* GOD BLESS AMERICA!!!! */
 const char kbd_us[] = {
 	0, 27,
@@ -32,11 +38,6 @@ const char kbd_us_shift[] = {
 	0,'*',0,' ',
 };
 
-/* global scancode (pressed), used by ps2_getc */
-static uint8_t scancode;
-/* global scancode (released) */
-static uint8_t scancode_rel;
-static bool is_shift;
 void irq1_handler(struct interrupt_frame *iframe)
 {
 	(void)iframe;
