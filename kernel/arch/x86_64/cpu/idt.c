@@ -3,7 +3,7 @@
 #include <arch/x86_64/cpu/gdt.h>
 #include <arch/x86_64/cpu/irq.h>
 #include <arch/x86_64/asm.h>
-#include <utils/kprint.h>
+#include <kernel/kernel.h>
 /* performance!! */
 __attribute__((aligned(0x10)))
 static struct idt_entry idt_table[IDT_MAX_ENTRIES];
@@ -74,33 +74,33 @@ void interrupt_handler(struct interrupt_frame *iframe)
 		irq_handle(iframe->int_number - 32, iframe);
 	}
 	if (iframe->int_number < 32) {
-		kprintf("\n\n=============INTERRUPT REACHED!============\n");
-		kprintf("INTERRUPT: %s (%#.2lx), ERROR CODE: %lu\n",
+		kprint(KLOG_ERROR, "\n\n=============INTERRUPT REACHED!============\n");
+		kprint(KLOG_ERROR, "INTERRUPT: %s (%#.2lx), ERROR CODE: %lu\n",
 			exceptions[iframe->int_number], iframe->int_number,
 			iframe->error_code);
 
 		if (iframe->int_number == 0xE) {
 			uint64_t value;
     			__asm__ volatile ("mov %%cr2, %0" : "=r"(value));
-			kprintf("CR2: %lx\n", value);
+			kprint(KLOG_ERROR, "CR2: %lx\n", value);
 		}
-		kprintf("=================REGISTERS=================\n");
-		kprintf("RAX: %#lx, RBX: %#lx, RCX: %#lx, RDX: %#lx\n",
+		kprint(KLOG_ERROR, "=================REGISTERS=================\n");
+		kprint(KLOG_ERROR, "RAX: %#lx, RBX: %#lx, RCX: %#lx, RDX: %#lx\n",
 			iframe->rax, iframe->rbx, iframe->rcx, iframe->rdx);
 		
-		kprintf("RSI: %#lx, RDI: %#lx, RBP: %#lx, R8: %#lx\n",
+		kprint(KLOG_ERROR, "RSI: %#lx, RDI: %#lx, RBP: %#lx, R8: %#lx\n",
 			iframe->rsi, iframe->rdi, iframe->rbp, iframe->r8);
 		
-		kprintf("R9: %#lx,  R10: %#lx, R11: %#lx, R12: %#lx\n",
+		kprint(KLOG_ERROR, "R9: %#lx,  R10: %#lx, R11: %#lx, R12: %#lx\n",
 			iframe->r9, iframe->r10, iframe->r11, iframe->r12);
 		
-		kprintf("R13: %#lx, R14: %#lx, R15: %#lx, RIP: %#lx\n",
+		kprint(KLOG_ERROR, "R13: %#lx, R14: %#lx, R15: %#lx, RIP: %#lx\n",
 			iframe->r13, iframe->r14, iframe->r15, iframe->rip);
 		
-		kprintf("CS: %#lx, RFLAGS: %#lx, RSP: %#lx, SS: %#lx\n",
+		kprint(KLOG_ERROR, "CS: %#lx, RFLAGS: %#lx, RSP: %#lx, SS: %#lx\n",
 			iframe->cs, iframe->rflags, iframe->rsp, iframe->ss);
 
-		kprintf("\nHALTING!\n");
+		kprint(KLOG_ERROR, "\nHALTING!\n");
 		hcf();
 	}
 }
