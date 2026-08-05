@@ -97,53 +97,57 @@ void lapic_eoi(void)
 	lapic_write_reg(0xB0, 0);
 }
 
+/* IOAPIC */
 
-uint32_t ioapic_read(void *ioapic_addr, uint32_t reg)
+struct ioapic_hdr {
+	uint32_t reg;
+	uint32_t pad[3];
+	uint32_t data;
+}__attribute__((packed));
+
+volatile struct ioapic_hdr *ioapic;
+
+uint32_t ioapic_read(int reg)
 {
-	volatile uint32_t *ioapic = (volatile uint32_t*)ioapic_addr;
-	ioapic[0] = (reg & 0xff);
-	return ioapic[4];
+	ioapic->reg = reg;
+	return ioapic->data;
 }
 
-void ioapic_write(void *ioapic_addr, uint32_t reg, uint32_t value)
+void ioapic_write(uint32_t reg, uint32_t value)
 {
-	volatile uint32_t *ioapic = (volatile uint32_t*)ioapic_addr;
-	ioapic[0] = (reg & 0xff);
-	ioapic[4] = value;
+	ioapic->reg = reg;
+	ioapic->data = value;
 }
-
-static void *ioapic_addr;
 
 /* initialize the ioapic */
-void ioapic_init(struct madt_ioapic *ioapic)
+void ioapic_init(struct madt_ioapic *madt_ioapic)
 {
 	disable_pic();
-    
-	uint64_t phys_addr = ioapic->ioapic_addr;
 
+	int id, max_intr;
+	
+	/* we must map this to avoid page fault */
+	uint64_t phys_addr = madt_ioapic->ioapic_addr;
 	uint64_t virt_addr = hhdm_request.response->offset + phys_addr;
-	uint64_t flags = PTE_PRESENT | PTE_MMIO_FLAGS; 
+	vmm_map_page(virt_addr, phys_addr, PTE_PRESENT | PTE_MMIO_FLAGS);
+	ioapic = (volatile struct ioapic_hdr *)virt_addr;
 
-	vmm_map_page(virt_addr, phys_addr, flags);
+	max_intr = ((ioapic_read(IOAPICVER) >> 16) & 0xFF);
+	id = ioapic_read(IOAPICID) >> 24;
+	if (id != madt_ioapic->ioapic_id) {
+		panic("IOAPIC ID IS INVALID");
+	}
 
-	ioapic_addr = (void*)virt_addr;
 
-	uint32_t ver = ioapic_read(ioapic_addr, IOAPICVER);
-	uint8_t max_redir_entry = ((ver >> 16) & 0xFF) + 1;
-	for (uint8_t i = 0; i < max_redir_entry; i++) {
-		uint32_t reg_low = IOAPICTBL + (i * 2);
-		uint32_t reg_high = reg_low + 1;
-
-		ioapic_write(ioapic_addr, reg_high, 0x00000000);
-		ioapic_write(ioapic_addr, reg_low, 0x00010000);
+	/* all interrupts active high, disabled */
+	for (int i = 0; i < max_intr; i++) {
+		ioapic_write(IOAPICREDTBL(i), INT_DISABLED | (32 + i));
+		ioapic_write(IOAPICREDTBL(i) + 1, 0);
 	}
 }
 
 void ioapic_route(uint8_t pin, uint8_t vector)
 {
-	uint32_t reg_low = IOAPICTBL + (pin * 2);
-	uint32_t reg_high = reg_low + 1;
-
-	ioapic_write(ioapic_addr, reg_high, 0x00000000);
-	ioapic_write(ioapic_addr, reg_low, vector);
+	ioapic_write(IOAPICREDTBL(pin), vector);
+	ioapic_write(IOAPICREDTBL(pin) + 1, 0);
 }

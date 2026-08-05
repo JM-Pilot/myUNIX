@@ -16,6 +16,7 @@ void kernel_main(void)
 	 * todo: Make a scheduler and start process 1
 	 */
 	__asm__ volatile ("sti");
+
 	while (1) {
 		kprintf("%c", ps2_getc());
 	}

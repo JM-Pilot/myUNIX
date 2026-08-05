@@ -138,7 +138,7 @@ void init(void)
 
 	/* this calls madt_parse so no need to call it */
 	acpi_init();
-	kprintf("ACPI Initialized\n");
+	kprintf("ACPI parsed\n");
 
 	irq_init();
 	kprintf("IRQ Loaded\n");

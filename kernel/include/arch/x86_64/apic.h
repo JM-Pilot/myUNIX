@@ -20,12 +20,17 @@ void init_lapic_base(void);
 #define IOAPICVER 0x1
 #define IOAPICARB 0x2
 #define IOAPICTBL 0x10
-#define IOAPICREDTBL(n) (0x10 + 2 * n);
+#define IOAPICREDTBL(n) (0x10 + 2 * n)
 
-void ioapic_init(struct madt_ioapic *ioapic);
+#define INT_DISABLED   0x00010000
+#define INT_LEVEL      0x00008000
+#define INT_ACTIVELOW  0x00002000
+#define INT_LOGICAL    0x00000800  
 
 /* disable the legacy PIC (i8259) */
 void disable_pic(void);
+
+void ioapic_init(struct madt_ioapic *madt_ioapic);
 
 void ioapic_route(uint8_t pin, uint8_t vector);
 
